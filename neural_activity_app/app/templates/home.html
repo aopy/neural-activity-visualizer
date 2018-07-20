@@ -1,7 +1,7 @@
 {% extends 'base.html' %} {% block content %}
 
-
-<div id="neural-activity-app">
+<div>
+    <div ng-controller="HomeCtrl" id="neural-activity-app" data-ng-init="goToFileView()">
 
     <div ui-view=""></div>
 </div>

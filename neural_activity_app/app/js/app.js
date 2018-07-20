@@ -34,7 +34,6 @@ var NeuralActivityApp = angular.module('NeuralActivityApp', [
     'ngResource',
     'ApiCommunicationServices',
     'FileServices',
-
     'GraphicsServices',
     'ngCookies',
     'nvd3',
@@ -45,11 +44,6 @@ NeuralActivityApp.config(
     function($cookiesProvider, $httpProvider, $stateProvider, $locationProvider, $rootScopeProvider, $resourceProvider, $urlRouterProvider) {
         $resourceProvider.defaults.stripTrailingSlashes = false;
         $stateProvider
-            .state('search', {
-                url: '/home',
-                templateUrl: '/static/templates/search.tpl.html',
-                controller: 'HomeCtrl'
-            })
             .state('help', {
                 url: '/help',
                 templateUrl: '/static/templates/help.tpl.html',
