@@ -12,40 +12,40 @@ Visualizer = angular.module('Visualizer', [
     'ngTextTruncate',
 ]);
 
-Visualizer.config(
-    function($cookiesProvider, $httpProvider, $stateProvider, $locationProvider, $rootScopeProvider, $resourceProvider, $urlRouterProvider) {
-        $resourceProvider.defaults.stripTrailingSlashes = false;
-        $stateProvider
+// Visualizer.config(
+//     function($cookiesProvider, $httpProvider, $stateProvider, $locationProvider, $rootScopeProvider, $resourceProvider, $urlRouterProvider) {
+//         $resourceProvider.defaults.stripTrailingSlashes = false;
+//         $stateProvider
 
-            .state('visualizer', {
-                // parent: 'home',
-                abstract: true
-            })
-            .state('visualizer.block', {
-                url: '/block',
-                component: 'blockView'
-            })
+//             .state('visualizer', {
+//                 // parent: 'home',
+//                 abstract: true
+//             })
+//             .state('visualizer.block', {
+//                 // url: '/block',
+//                 component: 'blockView'
+//             })
 
-        .state('visualizer.segment', {
+//         .state('visualizer.segment', {
 
-                url: '/segment/{segment_id:[0-9]{1,8}}',
-                component: 'segmentView'
-            })
-            .state('visualizer.analog_signal', {
+//                 // url: '/segment/{segment_id:[0-9]{1,8}}',
+//                 component: 'segmentView'
+//             })
+//             .state('visualizer.analog_signal', {
 
-                url: '/analog_signal/{segment_id:[0-9]{1,8}}?{analog_signal_id:[0-9]{1,8}}',
-                component: 'analogsignalView'
-            })
-            .state('visualizer.spiketrain', {
+//                 // url: '/analog_signal/{segment_id:[0-9]{1,8}}?{analog_signal_id:[0-9]{1,8}}',
+//                 component: 'analogsignalView'
+//             })
+//             .state('visualizer.spiketrain', {
 
-                url: '/spiketrain/{segment_id:[0-9]{1,8}}?{spiketrain_id:[0-9]{1,8}}',
-                component: 'spiketrainView'
-            })
-    });
+//                 // url: '/spiketrain/{segment_id:[0-9]{1,8}}?{spiketrain_id:[0-9]{1,8}}',
+//                 component: 'spiketrainView'
+//             })
+//     });
 
-Visualizer.controller('MenuCtrl', ['$scope', '$rootScope', '$http', '$location', '$stateParams', '$state', 'FileService',
+Visualizer.controller('MenuCtrl', ['$scope', '$rootScope', '$http', '$location', '$stateParams', '$state', '$compile', '$element', 'FileService',
 
-    function($scope, $rootScope, $http, $location, $stateParams, $state, FileService) {
+    function($scope, $rootScope, $http, $location, $stateParams, $state, $compile, $element, FileService) {
         var ctrl = this;
 
         $scope.menu_segments_to_show = [];
@@ -64,6 +64,7 @@ Visualizer.controller('MenuCtrl', ['$scope', '$rootScope', '$http', '$location',
                 } else { $scope.menu_segments_to_show.splice(i, i); }
                 document.getElementById("arrow-segment-" + id).className = "glyphicon glyphicon-menu-down";
             };
+            $scope.showSegmentPanel(segment_id)
         }
 
         $scope.showAnalogSignals = function(segment_id) {
@@ -94,6 +95,27 @@ Visualizer.controller('MenuCtrl', ['$scope', '$rootScope', '$http', '$location',
             };
         }
 
+
+        $scope.showBlockPanel = function() {
+            html_panel = $compile('<div id=' + $scope.panel_id + ' align=rigth><block-view><block-view></div>')($scope);
+            angular.element('#' + $scope.panel_id).replaceWith(html_panel);
+        }
+
+        $scope.showSegmentPanel = function(segment_id) {
+            html_panel = $compile('<div id="detail-panel-' + $scope.panel_ID + '" align=rigth><segment-view segmentId="' + segment_id + '"><segment-view></div>')($scope);
+            angular.element('#' + $scope.panel_ID).replaceWith(html_panel);
+        }
+
+        $scope.showAnalogSignalPanel = function(segment_id, analogsignal_id) {
+            html_panel = $compile('<div id=' + $scope.panel_ID + ' align=rigth><analogsignal-view segmentId="' + segment_id + '" analogsignalId="' + analogsignal_id + '"><analogsignal-view></div>')($scope);
+            angular.element('#' + $scope.panel_ID).replaceWith(html_panel);
+        }
+
+        $scope.showSpiketrainPanel = function(segment_id, spiketrain_id) {
+            html_panel = $compile('<div id=' + $scope.panel_ID + ' align=rigth><spiketrain-view segmentId="' + segment_id + '" spiketrainId="' + spiketrain_id + '"><spiketrain-view></div>')($scope);
+            angular.element('#' + $scope.panel_ID).replaceWith(html_panel);
+        }
+
         $scope.isInArray = function(value, array) {
             return array.indexOf(value) > -1;
         }
@@ -102,10 +124,15 @@ Visualizer.controller('MenuCtrl', ['$scope', '$rootScope', '$http', '$location',
             $scope.data = FileService.getData();
             $scope.$apply();
         });
+
+
+
         //code
+        $scope.panel_id = Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15)
+
         FileService.setService($scope.source).then(function() {
             $scope.data = FileService.getData();
-            console.log("data", $scope.data)
+            $scope.showBlockPanel();
             $scope.$apply();
         });
 
@@ -116,9 +143,11 @@ Visualizer.directive("visualizerView", ['FileService', '$stateParams', function(
     return {
         restrict: 'EA',
         replace: true,
-        transclude: true,
+        // transclude: true,
         templateUrl: '/static/templates/visualizer.tpl.html',
-        scope: { source: '@' },
+        scope: {
+            source: '@'
+        },
         controller: 'MenuCtrl'
     }
 

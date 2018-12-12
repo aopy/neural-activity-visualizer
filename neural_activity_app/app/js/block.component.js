@@ -17,9 +17,7 @@ directive("blockView", ['FileService', '$stateParams', function(FileService, $st
                 $scope.data_block = $scope.$parent.data.block[0];
                 $scope.$apply();
             });
-            console.log('block-view controller loaded')
             FileService.setService($stateParams.file_name).then(function() {
-
                 $scope.data = FileService.getData()
                 $scope.data_block = $scope.$parent.data.block[0];
                 $scope.$apply();

@@ -5,10 +5,14 @@ directive("analogsignalView", ['FileService', '$stateParams', 'Graphics', functi
         replace: true,
         transclude: true,
         templateUrl: '/static/templates/analog-signal-view.tpl.html',
+        scope: {
+            segmentid: '@',
+            analogsignalid: '@'
+        },
         link: function($scope, $http, $location, $element, $attrs) {
             //variables
-            $scope.segment_id = $stateParams.segment_id;
-            $scope.analog_signal_id = $stateParams.analog_signal_id;
+            $scope.segment_id = $scope.segmentid;
+            $scope.analog_signal_id = $scope.analogsignalid;
 
             //functions
 
