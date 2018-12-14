@@ -1,14 +1,14 @@
 <div class="content">
     <nav id=menu-panel class="menu">
 
-        <ul id="menu-block" class="nav-item-1">
+        <ul id="menu-block" controller="MenuCtrl" class="nav-item-1">
             <li>
                 <div class="card">
                     <div>
                         <a id=item-block type="button" class="btn btn-block button-block" ng-click="showBlockPanel()"> Block </a>
                     </div>
 
-                    <ul id=menu-block ng-repeat="(s_key,segment) in $parent.data.block[0].segments">
+                    <ul id=menu-block ng-repeat="(s_key,segment) in data.block[0].segments">
                         <li>
                             <div class="card">
                                 <div>

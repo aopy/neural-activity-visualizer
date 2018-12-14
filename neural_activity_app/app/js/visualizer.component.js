@@ -128,9 +128,10 @@ Visualizer.controller('MenuCtrl', ['$scope', '$rootScope', '$http', '$location',
 
 
         //code
-        $scope.panel_id = Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15)
 
         FileService.setService($scope.source).then(function() {
+            $scope.panel_id = Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15)
+
             $scope.data = FileService.getData();
             $scope.showBlockPanel();
             $scope.$apply();

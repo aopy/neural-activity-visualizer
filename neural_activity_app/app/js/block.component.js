@@ -14,12 +14,12 @@ directive("blockView", ['FileService', '$stateParams', function(FileService, $st
             //main code
 
             $scope.$on('data_updated', function() {
-                $scope.data_block = $scope.$parent.data.block[0];
+                $scope.data_block = $scope.data.block[0];
                 $scope.$apply();
             });
             FileService.setService($stateParams.file_name).then(function() {
                 $scope.data = FileService.getData()
-                $scope.data_block = $scope.$parent.data.block[0];
+                $scope.data_block = $scope.data.block[0];
                 $scope.$apply();
             });
         }
