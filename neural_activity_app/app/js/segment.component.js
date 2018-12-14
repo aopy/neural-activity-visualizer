@@ -5,13 +5,11 @@ directive("segmentView", ['FileService', '$stateParams', function(FileService, $
         replace: true,
         transclude: true,
         templateUrl: '/static/templates/segment-view.tpl.html',
+        scope: { segmentid: '@' },
         link: function($scope, $http, $location, $element, $attrs) {
             //variables
-            // $scope.block_id = $stateParams.block_id;
-            $scope.segment_id = $stateParams.segment_id;
-
+            $scope.segment_id = $scope.segmentid;
             //functions
-
 
             //main code
             $scope.$on('data_updated', function() {
