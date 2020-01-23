@@ -138,3 +138,23 @@ CORS_ORIGIN_ALLOW_ALL = True
 #CORS_ALLOW_METHODS = (
 #    'GET',
 #)
+
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'handlers': {
+        'file': {
+            'level': 'DEBUG',
+            'class': 'logging.FileHandler',
+            'filename': 'debug01.log',
+        },
+    },
+    'loggers': {
+        'neoview': {
+            'handlers': ['file'],
+            'level': 'DEBUG',
+            'propagate': True,
+        },
+    },
+}
+
