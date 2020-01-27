@@ -19,6 +19,10 @@ try:
     unicode
 except NameError:
     unicode = str
+# import logging
+from time import sleep
+
+# logger = logging.getLogger(__name__)
 
 
 def _get_file_from_url(request):
@@ -26,7 +30,8 @@ def _get_file_from_url(request):
     if url:
         response = urlopen(url)
         filename = basename(response.url)
-        urlretrieve(url, filename)
+        if not os.path.isfile(filename):
+            urlretrieve(url, filename)
         # todo: wrap previous line in try..except so we can return a 404 if the file is not found
         #       or a 500 if the local disk is full
 
@@ -55,23 +60,23 @@ class Block(APIView):
     def get(self, request, format=None, **kwargs):
         lazy = False
         na_file = _get_file_from_url(request)
-
+        neo_io = get_io(na_file)
         if 'type' in request.GET and request.GET.get('type'):
             iotype = request.GET.get('type')
             method = getattr(io, iotype)
             r = method(filename=na_file)
-            if get_io(na_file).support_lazy:
+            if r.support_lazy:
                 block = r.read_block(lazy=True)
                 lazy = True
             else:
                 block = r.read_block()
         else:
             try:
-                if get_io(na_file).support_lazy:
-                    block = get_io(na_file).read_block(lazy=True)
+                if neo_io.support_lazy:
+                    block = neo_io.read_block(lazy=True)
                     lazy = True
                 else:
-                    block = get_io(na_file).read_block()
+                    block = neo_io.read_block()
 
             except IOError as err:
                 # todo: need to be more fine grained. There could be other reasons
@@ -147,12 +152,12 @@ class Segment(APIView):
     def get(self, request, format=None, **kwargs):
         lazy = False
         na_file = _get_file_from_url(request)
-
-        if get_io(na_file).support_lazy:
-            block = get_io(na_file).read_block(lazy=True)
+        neo_io = get_io(na_file)
+        if neo_io.support_lazy:
+            block = neo_io.read_block(lazy=True)
             lazy = True
         else:
-            block = get_io(na_file).read_block()
+            block = neo_io.read_block()
         id_segment = int(request.GET['segment_id'])
         # todo, catch MultiValueDictKeyError in case segment_id isn't given, and return a 400 Bad Request response
         segment = block.segments[id_segment]
@@ -209,12 +214,18 @@ class AnalogSignal(APIView):
     def get(self, request, format=None, **kwargs):
         lazy = False
         na_file = _get_file_from_url(request)
+        while True:  # todo, find better solution
+            try: 
+                neo_io = get_io(na_file)
+                break
+            except OSError:
+                sleep(5)
 
-        if get_io(na_file).support_lazy:
-            block = get_io(na_file).read_block(lazy=True)
+        if neo_io.support_lazy:
+            block = neo_io.read_block(lazy=True)
             lazy = True
         else:
-            block = get_io(na_file).read_block()
+            block = neo_io.read_block()
         id_segment = int(request.GET['segment_id'])
         id_analog_signal = int(request.GET['analog_signal_id'])
         # todo, catch MultiValueDictKeyError in case segment_id or analog_signal_id aren't given, and return a 400 Bad Request response
@@ -274,12 +285,18 @@ class SpikeTrain(APIView):
     def get(self, request, format=None, **kwargs):
         lazy = False
         na_file = _get_file_from_url(request)
+        while True:
+            try:
+                neo_io = get_io(na_file)
+                break
+            except OSError:
+                sleep(5)
 
-        if get_io(na_file).support_lazy:
-            block = get_io(na_file).read_block(lazy=True)
+        if neo_io.support_lazy:
+            block = neo_io.read_block(lazy=True)
             lazy = True
         else:
-            block = get_io(na_file).read_block()
+            block = neo_io.read_block()
         id_segment = int(request.GET['segment_id'])
         segment = block.segments[id_segment]
 
