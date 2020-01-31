@@ -359,12 +359,12 @@ angular.module('neo-visualizer', ['ng', 'ngResource', 'nvd3'])
                     $scope.segment = data;
                     $scope.block.segments[$scope.currentSegmentId] = $scope.segment;
                     console.log(data);
-                    if($scope.segment.spiketrains.length > 0 && !$scope.signalid || $scope.spiketrainselect) {
+                    if($scope.segment.spiketrains.length > 0 && (!$scope.signalid || $scope.spiketrainselect)) {
                         console.log("length of spike trains " + $scope.segment.spiketrains.length);
                         $scope.spiketrains = {};
                         $scope.switchSpikeTrain();
                     }
-                    if($scope.signalid){
+                    if($scope.signalid && ($scope.segment.analogsignals[$scope.signalid] !== undefined)){
                         console.log("signal id: " +  $scope.signalid);
                         $scope.currentAnalogSignalId = $scope.signalid;
                         $scope.switchAnalogSignal();
